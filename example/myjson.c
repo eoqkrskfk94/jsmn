@@ -10,6 +10,7 @@
 
 static const char *JSON_STRING =
 	"{\"user\": \"johndoe\", \"admin\": false, \"uid\": 1000,\n  "
+	" \"user\": \"eoqkrskfk94\", \"admin\": true, \"uid\": 2000,\n  " 
 	"\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
