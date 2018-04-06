@@ -25,10 +25,10 @@ test_strict_links: test/tests.c
 
 jsmn_test.o: jsmn_test.c libjsmn.a
 
-myjson_example: example/myjson.o libjsmn.a
+simple_example: example/simple.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
-tjsondump: example/jsondump.o libjsmn.a
+jsondump: example/jsondump.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
 clean:
