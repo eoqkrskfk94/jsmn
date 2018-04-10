@@ -10,7 +10,7 @@
 
 static const char *JSON_STRING =
 	"{\"user\": \"johndoe\", \"admin\": false, \"uid\": 1000,\n  "
-	" \"user\": \"eoqkrskfk94\", \"admin\": true, \"uid\": 2000,\n  " 
+	" \"user\": \"eoqkrskfk94\", \"admin\": true, \"uid\": 2000,\n  "
 	"\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
@@ -29,6 +29,9 @@ int main() {
 
 	jsmn_init(&p);
 	r = jsmn_parse(&p, JSON_STRING, strlen(JSON_STRING), t, sizeof(t)/sizeof(t[0]));
+	#ifdef DEBUG_MODE
+		printf("Tokens count: %d\n", r);
+	#endif
 	if (r < 0) {
 		printf("Failed to parse JSON: %d\n", r);
 		return 1;
