@@ -7,7 +7,7 @@ libjsmn.a: jsmn.o
 	$(AR) rc $@ $^
 
 %.o: %.c jsmn.h
-	$(CC) $(AAA) -c $(CFLAGS) $< -o $@
+	$(CC) -DDEBUG_MODE  -c $(CFLAGS) $< -o $@
 
 test: test_default test_strict test_links test_strict_links
 test_default: test/tests.c
@@ -25,7 +25,7 @@ test_strict_links: test/tests.c
 
 jsmn_test.o: jsmn_test.c libjsmn.a
 
-myjson_example: example/myjson.o libjsmn.a
+myjson_debug: example/myjson.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
 tjsondump: example/jsondump.o libjsmn.a

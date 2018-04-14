@@ -8,6 +8,15 @@
  * tokens is predictable.
  */
 
+ static void printTokens(jsmntok_t *t, int count){
+ 	int i;
+ 	for(i = 0; i < count; i++){
+ 		printf("%d: start:%d, end:%d, size:%d, type:%d, parent:%d \n",i
+ 		,t[i].start,t[i].end,t[i].size,t[i].type,t[i].parent);
+ 	}
+ }
+
+
 static const char *JSON_STRING =
 	"{\"user\": \"johndoe\", \"admin\": false, \"uid\": 1000,\n  "
 	"\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";
@@ -31,6 +40,9 @@ int main() {
 	#ifdef DEBUG_MODE
 		printf("Tokens count: %d\n", r);
 	#endif
+
+	printTokens(t, r);
+
 	if (r < 0) {
 		printf("Failed to parse JSON: %d\n", r);
 		return 1;
@@ -43,8 +55,8 @@ int main() {
 	}
 	/*for(i = 1; i < r; i++)
 	{
-		printf("[%d]- User: %.*s\n",i+1 ,t[i+1].end-t[i+1].start,
-			JSON_STRING + t[i+1].start);
+		printf("[%d] %.*s\n",i ,t[i].end-t[i].start,
+			JSON_STRING + t[i].start);
 	}*/
 
 	/* Loop over all keys of the root object */
@@ -52,31 +64,31 @@ int main() {
 		if (jsoneq(JSON_STRING, &t[i], "user") == 0) {
 			/* We may use strndup() to fetch string value */
 			printf("%d  %d\n",t[i+1].start,t[i+1].end);
-			printf("[%d]- User: %.*s\n",i+1 ,t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
+			printf("[%d]- User: %.*s  parent:%d\n",i+1 ,t[i+1].end-t[i+1].start,
+					JSON_STRING + t[i+1].start,t[i+1].parent);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "admin") == 0) {
 			/* We may additionally check if the value is either "true" or "false" */
 			printf("%d  %d\n",t[i+1].start,t[i+1].end);
-			printf("[%d]- Admin: %.*s\n",i+1, t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
+			printf("[%d]- Admin: %.*s  parent:%d\n",i+1, t[i+1].end-t[i+1].start,
+					JSON_STRING + t[i+1].start,t[i+1].parent);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "uid") == 0) {
 			/* We may want to do strtol() here to get numeric value */
 			printf("%d  %d\n",t[i+1].start,t[i+1].end);
-			printf("[%d]- UID: %.*s\n",i+1, t[i+1].end-t[i+1].start,
-					JSON_STRING + t[i+1].start);
+			printf("[%d]- UID: %.*s  parent:%d\n",i+1, t[i+1].end-t[i+1].start,
+					JSON_STRING + t[i+1].start,t[i+1].parent);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "groups") == 0) {
 			int j;
 			printf("%d  %d\n",t[i+1].start,t[i+1].end);
-			printf("- Groups:\n");
+			printf("- Groups:  parent:%d\n",t[i].parent);
 			if (t[i+1].type != JSMN_ARRAY) {
 				continue; /* We expect groups to be an array of strings */
 			}
 			for (j = 0; j < t[i+1].size; j++) {
 				jsmntok_t *g = &t[i+j+2];
-				printf("[%d]  * %.*s\n",i+j+2, g->end - g->start, JSON_STRING + g->start);
+				printf("[%d]  * %.*s  parent:%d\n",i+j+2, g->end - g->start, JSON_STRING + g->start,t[i+j+2].parent);
 			}
 			i += t[i+1].size + 1;
 		} else {
