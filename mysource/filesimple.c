@@ -20,6 +20,35 @@ static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 	return -1;
 }
 
+char *readJSONFile() {
+		FILE* file;
+
+		file = fopen("data.json", "r");
+		if(file == NULL) {
+			printf("Error opening file \n");
+			return NULL;
+		}
+
+		int count;
+		char line[256];
+		char *JSON_STRING = (char*)malloc(sizeof(line));
+		//fgets(line,sizeof(line),file);
+		//strcat(JSON_STRING, line);
+
+		while(1){
+			if(feof(file)) break;
+			fgets(line,sizeof(line),file);
+			count += strlen(line);
+			//realloc(JSON_STRING,count+1);
+			JSON_STRING = (char*)realloc(JSON_STRING,count+1);
+			strcat(JSON_STRING,line);
+		}
+
+		return JSON_STRING;
+	}
+
+
+
 int main() {
 	int i;
 	int r;
@@ -38,6 +67,11 @@ int main() {
 		printf("Object expected\n");
 		return 1;
 	}
+
+	char* New_JSON_STRING = readJSONFile();
+	printf("\n%s\n",New_JSON_STRING);
+
+
 
 	/* Loop over all keys of the root object */
 	for (i = 1; i < r; i++) {
