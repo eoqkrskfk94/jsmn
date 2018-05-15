@@ -8,9 +8,9 @@
  * tokens is predictable.
  */
 
-static const char *JSON_STRING =
+/*static const char *JSON_STRING =
 	"{\"user\": \"johndoe\", \"admin\": false, \"uid\": 1000,\n  "
-	"\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";
+	"\"groups\": [\"users\", \"wheel\", \"audio\", \"video\"]}";*/
 
 static int jsoneq(const char *json, jsmntok_t *tok, const char *s) {
 	if (tok->type == JSMN_STRING && (int) strlen(s) == tok->end - tok->start &&
@@ -29,15 +29,14 @@ char *readJSONFile() {
 			return NULL;
 		}
 
-		int count;
+		int count = 0;
 		char line[256];
 		char *JSON_STRING = (char*)malloc(sizeof(line));
-		//fgets(line,sizeof(line),file);
-		//strcat(JSON_STRING, line);
+
 
 		while(1){
-			if(feof(file)) break;
 			fgets(line,sizeof(line),file);
+			if(feof(file)) break;
 			count += strlen(line);
 			//realloc(JSON_STRING,count+1);
 			JSON_STRING = (char*)realloc(JSON_STRING,count+1);
@@ -55,6 +54,9 @@ int main() {
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
 
+	char* JSON_STRING = readJSONFile();
+	printf("%s",JSON_STRING);
+
 	jsmn_init(&p);
 	r = jsmn_parse(&p, JSON_STRING, strlen(JSON_STRING), t, sizeof(t)/sizeof(t[0]));
 	if (r < 0) {
@@ -68,25 +70,58 @@ int main() {
 		return 1;
 	}
 
-	char* New_JSON_STRING = readJSONFile();
-	printf("\n%s\n",New_JSON_STRING);
+	for (i = 1; i < r; i++) {
+		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
+			/* We may use strndup() to fetch string value */
+			printf("- name: %.*s\n", t[i+1].end-t[i+1].start,
+					JSON_STRING + t[i+1].start);
+			i++;
+		} else if (jsoneq(JSON_STRING, &t[i], "keywords") == 0) {
+			/* We may additionally check if the value is either "true" or "false" */
+			printf("- keywords: %.*s\n", t[i+1].end-t[i+1].start,
+					JSON_STRING + t[i+1].start);
+			i++;
+		} else if (jsoneq(JSON_STRING, &t[i], "description") == 0) {
+			/* We may want to do strtol() here to get numeric value */
+			printf("- description: %.*s\n", t[i+1].end-t[i+1].start,
+					JSON_STRING + t[i+1].start);
+			i++;
+		}   else if (jsoneq(JSON_STRING, &t[i], "examples") == 0) {
+			/* We may want to do strtol() here to get numeric value */
+			printf("- examples: \n%.*s\n", t[i+2].end-t[i+2].start,
+					JSON_STRING + t[i+2].start);
+			i++;
+		}
+		/*else if (jsoneq(JSON_STRING, &t[i], "repository") == 0) {
+			int j;
+			printf("- repository:\n");
+			if (t[i+1].type != JSMN_ARRAY) {
+				continue;  We expect groups to be an array of strings
+			}
+			for (j = 0; j < t[i+1].size; j++) {
+				jsmntok_t *g = &t[i+j+2];
+				printf("  * %.*s\n", g->end - g->start, JSON_STRING + g->start);
+			}
+			i += t[i+1].size + 1;
+		} else {
+			printf("Unexpected key: %.*s\n", t[i].end-t[i].start,
+					JSON_STRING + t[i].start);
+		 */
+	}
 
 
 
-	/* Loop over all keys of the root object */
+	/*
 	for (i = 1; i < r; i++) {
 		if (jsoneq(JSON_STRING, &t[i], "user") == 0) {
-			/* We may use strndup() to fetch string value */
 			printf("- User: %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "admin") == 0) {
-			/* We may additionally check if the value is either "true" or "false" */
 			printf("- Admin: %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
 		} else if (jsoneq(JSON_STRING, &t[i], "uid") == 0) {
-			/* We may want to do strtol() here to get numeric value */
 			printf("- UID: %.*s\n", t[i+1].end-t[i+1].start,
 					JSON_STRING + t[i+1].start);
 			i++;
@@ -94,7 +129,7 @@ int main() {
 			int j;
 			printf("- Groups:\n");
 			if (t[i+1].type != JSMN_ARRAY) {
-				continue; /* We expect groups to be an array of strings */
+				continue;
 			}
 			for (j = 0; j < t[i+1].size; j++) {
 				jsmntok_t *g = &t[i+j+2];
@@ -105,6 +140,7 @@ int main() {
 			printf("Unexpected key: %.*s\n", t[i].end-t[i].start,
 					JSON_STRING + t[i].start);
 		}
-	}
+	}*/
+
 	return EXIT_SUCCESS;
 }
