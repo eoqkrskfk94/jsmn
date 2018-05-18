@@ -28,14 +28,13 @@ jsmn_test.o: jsmn_test.c libjsmn.a
 myjson_example: example/myjson.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
-<<<<<<< HEAD
 file_simple: mysource/filesimple.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
 jsondump: example/jsondump.o libjsmn.a
-=======
+
+
 tjsondump: example/jsondump.o libjsmn.a
->>>>>>> 340c63f84e6e29f28afe6646fbf527ca493ebd28
 	$(CC) $(LDFLAGS) $^ -o $@
 
 clean:
