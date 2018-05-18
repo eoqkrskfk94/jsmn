@@ -1,0 +1,4 @@
+example/myjson.o
+libjsmn.a
+myjson_example
+*.o
