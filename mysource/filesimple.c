@@ -46,23 +46,33 @@ char *readJSONFile() {
 		return JSON_STRING;
 	}
 
-void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount){
+void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex){
 	int i;
-	int count= 1;
-	printf("***** Name List *****\n");
+	int count = 1;
+
 	for(i = 1; i < tokcount; i++)
 	{
 		if(t[i].size > 0 && t[i].type == JSMN_STRING)
-		printf("[NAME %d] %.*s\n",count++,t[i].end-t[i].start,jsonstr + t[i].start);
+			nameTokIndex[count++] = i;
 	}
+	nameTokIndex[0] = count;
 }
 
+void printNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex){
+	int i;
+	printf("***** Name List *****\n");
+	for(i = 1; i < nameTokIndex[0]; i++)
+	{
+		printf("[NAME%3d] %.*s\n",i,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,jsonstr + t[nameTokIndex[i]].start);
+	}
+}
 
 int main() {
 	int i;
 	int r;
 	jsmn_parser p;
 	jsmntok_t t[128]; /* We expect no more than 128 tokens */
+	int name[128];
 
 	char* JSON_STRING = readJSONFile();
 	//printf("%s",JSON_STRING);
@@ -80,8 +90,8 @@ int main() {
 		return 1;
 	}
 
-	jsonNameList(JSON_STRING, t, r);
-
+	jsonNameList(JSON_STRING, t, r, name);
+	printNameList(JSON_STRING, t, r, name);
 
 	for (i = 1; i < r; i++) {
 		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
