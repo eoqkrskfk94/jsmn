@@ -50,14 +50,12 @@ void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex, 
 	int i;
 	int count = 1;
 	int count2 = 1;
-	int temp = 0;
 	sizeOfObject[0] = 0;
 
 	for(i = 1; i < tokcount; i++)
 	{
-		if(t[i].type == JSMN_OBJECT) printf("object\n");
 		if(t[i].size > 0 && t[i].type == JSMN_STRING)
-				nameTokIndex[count++] = i;
+			nameTokIndex[count++] = i;
 	}
 	nameTokIndex[0] = count;
 }
@@ -68,7 +66,7 @@ void printNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex)
 	printf("***** Name List *****\n");
 	for(i = 1; i < nameTokIndex[0]; i++)
 	{
-		printf("[NAME%3d] %.*s   size: %d type: %d\n",i,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,jsonstr + t[nameTokIndex[i]].start, t[i].size, t[i].type);
+		printf("[NAME%3d] %.*s\n",i,t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,jsonstr + t[nameTokIndex[i]].start);
 		//save = t[nameTokIndex[i]].end-t[nameTokIndex[i]].start,jsonstr + t[nameTokIndex[i]].start;
 		//printf("save : %d\n",save);
 	}
@@ -183,9 +181,9 @@ int main() {
 
 	jsonNameList(JSON_STRING, t, r, name, objectsize);
 	printNameList(JSON_STRING, t, r, name);
-	//selectNameList(JSON_STRING, t, name);
-	//printObjectList(JSON_STRING, t, r, object);
-	//selectObjectList(JSON_STRING, t, r, object, name, JSON_OBJECT, objectsize);
+	selectNameList(JSON_STRING, t, name);
+	printObjectList(JSON_STRING, t, r, object);
+	selectObjectList(JSON_STRING, t, r, object, name, JSON_OBJECT, objectsize);
  /*
 	for (i = 1; i < r; i++) {
 		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
