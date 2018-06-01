@@ -181,9 +181,9 @@ int main() {
 
 	jsonNameList(JSON_STRING, t, r, name, objectsize);
 	printNameList(JSON_STRING, t, r, name);
-	selectNameList(JSON_STRING, t, name);
+	//selectNameList(JSON_STRING, t, name);
 	printObjectList(JSON_STRING, t, r, object);
-	selectObjectList(JSON_STRING, t, r, object, name, JSON_OBJECT, objectsize);
+	//selectObjectList(JSON_STRING, t, r, object, name, JSON_OBJECT, objectsize);
  /*
 	for (i = 1; i < r; i++) {
 		if (jsoneq(JSON_STRING, &t[i], "name") == 0) {
