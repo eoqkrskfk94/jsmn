@@ -60,7 +60,7 @@ void jsonNameList(char *jsonstr, jsmntok_t *t, int tokcount, int *nameTokIndex, 
 	if(t[0].type == JSMN_OBJECT){
 		for(i = 1; i < tokcount; i++)
 		{
-			if(t[i].size > 0 && t[i].type == JSMN_STRING && t[t[i].parent].parent < 0)
+			if(t[i].size > 0 && t[i].type == JSMN_STRING && t[i].parent != 0)
 					nameTokIndex[count++] = i;
 		}
 		nameTokIndex[0] = count;
@@ -97,27 +97,15 @@ int *jsonObjectList(char *jsonstr, jsmntok_t *t, int tokcount){
 
 	int *objectTokIndex = (int*)malloc(sizeof(int)*2);
 
-	//case2: 전체 토큰이 object{}일때
 	if(t[0].type == JSMN_OBJECT){
 		for(i = 0; i < tokcount; i++){
-			if(t[i].type == JSMN_OBJECT && t[i-1].size == 0 && t[i].parent < 0){
+			if(t[i].type == JSMN_OBJECT && t[i].parent > 0){
 				objectTokIndex = (int*)realloc(objectTokIndex, sizeof(int));
 				objectTokIndex[count] = i;
 				count++;
 			}
 		}
 	}
-	//case2: 전체 토큰이 array일때
-	if(t[0].type == JSMN_ARRAY){
-		for(i = 0; i < tokcount; i++){
-			if(t[i].type == JSMN_OBJECT){
-				objectTokIndex = (int*)realloc(objectTokIndex, sizeof(int));
-				objectTokIndex[count] = i;
-				count++;
-			}
-		}
-	}
-
 	objectTokIndex[0] = count - 1;
 
 	return objectTokIndex;
