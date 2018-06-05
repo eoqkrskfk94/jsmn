@@ -202,6 +202,73 @@ void printdisplay(char *jsonstr,jsmntok_t *t, int tokcount, NameTokenInfo *nameT
 	}
 }
 
+int makeProduct(char *jsonstr, jsmntok_t *t, int tokcount, product_t *phonelist[]){
+	int trigger = 1;
+	int j= 0;
+	int count = 1;
+	int number = 0;
+	char temp[1024];
+
+
+	for(j= 0; j < tokcount; j++){
+
+		if(trigger == 1){
+			phonelist[number] = (product_t*)malloc(sizeof(product_t));
+			trigger = 0;
+		}
+		sprintf(temp,"%.*s",t[j].end-t[j].start,jsonstr + t[j].start);
+		if(!strcmp(temp,"삼성")) phonelist[number]->company = SAMSUNG;
+		else if(!strcmp(temp,"애플")) phonelist[number]->company = APPLE;
+		else if(!strcmp(temp,"엘지")) phonelist[number]->company = LG;
+		else if(!strcmp(temp,"샤오미")) phonelist[number]->company = SHAOMI;
+
+		if(!strcmp(temp,"name")){
+			sprintf(temp,"%.*s",t[j+1].end-t[j+1].start,jsonstr + t[j+1].start);
+			strcpy(phonelist[number]->name,temp);
+		}
+
+		if(!strcmp(temp,"release_year")) {
+			sprintf(temp,"%.*s",t[j+1].end-t[j+1].start,jsonstr + t[j+1].start );
+			phonelist[number]->release_year = atoi(temp);
+		}
+
+		if(!strcmp(temp,"OS")){
+			sprintf(temp,"%.*s",t[j+1].end-t[j+1].start,jsonstr + t[j+1].start);
+			strcpy(phonelist[number]->OS,temp);
+		}
+
+		if(!strcmp(temp,"hardware")){
+			sprintf(temp,"%.*s",t[j+1].end-t[j+1].start,jsonstr + t[j+1].start);
+			strcpy(phonelist[number]->hardware,temp);
+			trigger = 1;
+			number++;
+		}
+
+	}
+
+	return number;
+}
+
+void printProduct(product_t *phonelist[], int pcount){
+
+	int i;
+	printf("*************************************************************************************\n");
+	printf("번호 \t제품명 \t\t제조자 \t\t출시일 \t\t운영체제 \t하드웨어\n");
+	printf("*************************************************************************************\n");
+
+	for(i = 0; i < pcount; i++){
+		printf("%d",i+1);
+		if(phonelist[i]->company == 0) printf(" \t삼성");
+		else if(phonelist[i]->company == 1) printf(" \t애플");
+		else if(phonelist[i]->company == 2) printf(" \t엘지");
+		else if(phonelist[i]->company == 3) printf(" \t샤오미");
+		printf("\t\t%-10s",phonelist[i]->name);
+		printf("\t%d",phonelist[i]->release_year);
+		printf("\t\t%s",phonelist[i]->OS);
+		printf("\t\t%s\n",phonelist[i]->hardware);
+	}
+}
+
 
 
 int main() {
@@ -212,6 +279,8 @@ int main() {
 	int name[128];
 	int objectsize[128];
 	NameTokenInfo tokenInfo[128];
+	product_t *phonelist[20];
+	int total;
 
 	char* JSON_STRING = readJSONFile();
 	//printf("%s",JSON_STRING);
@@ -226,16 +295,19 @@ int main() {
 	/* Assume the top-level element is an object */
 	if (r < 1 /*|| t[0].type != JSMN_OBJECT */) {
 		printf("Object expected\n");
+
 		return 1;
 	}
 
-	jsonObjectList(JSON_STRING, t, r,tokenInfo);
-	jsonNameList(JSON_STRING, t, r, tokenInfo);
-	printNameList(JSON_STRING, t, r, tokenInfo);
+	//jsonObjectList(JSON_STRING, t, r,tokenInfo);
+	//jsonNameList(JSON_STRING, t, r, tokenInfo);
+	//printNameList(JSON_STRING, t, r, tokenInfo);
 	//selectNameList(JSON_STRING, t, name, tokenInfo);
-	printObjectList(JSON_STRING, t, r,tokenInfo);
-	selectObjectList(JSON_STRING, t, r, tokenInfo);
-	selectTokIndex(JSON_STRING, t, r, tokenInfo);
-	printdisplay(JSON_STRING,t,r, tokenInfo);
+	//printObjectList(JSON_STRING, t, r,tokenInfo);
+	//selectObjectList(JSON_STRING, t, r, tokenInfo);
+	//selectTokIndex(JSON_STRING, t, r, tokenInfo);
+	//printdisplay(JSON_STRING,t,r, tokenInfo);
+	total = makeProduct(JSON_STRING, t, r, phonelist);
+	printProduct(phonelist, total);
 
 }

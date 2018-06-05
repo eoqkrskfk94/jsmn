@@ -34,8 +34,10 @@ file_simple: mysource/filesimple.o libjsmn.a
 productlist: mysource/productlist.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
-jsondump: example/jsondump.o libjsmn.a
+phonelist: mysource/phonelist.o libjsmn.a
+	$(CC) $(LDFLAGS) $^ -o $@
 
+jsondump: example/jsondump.o libjsmn.a
 
 tjsondump: example/jsondump.o libjsmn.a
 	$(CC) $(LDFLAGS) $^ -o $@
@@ -47,5 +49,6 @@ clean:
 	rm -f jsondump
 	rm -f file_simple
 	rm -f productlist
+	rm -f phonelist
 
 .PHONY: all clean test

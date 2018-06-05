@@ -1,0 +1,33 @@
+{
+  "SmartPhone":
+    [
+      {
+        "company": "삼성",
+        "name": "Galaxy S9",
+        "release_year": 2018,
+        "OS": "Android",
+        "hardware": "Snapdragon 845"
+      },
+      {
+        "company": "애플",
+        "name": "iPhone X",
+        "release_year": 2018,
+        "OS": "IOS",
+        "hardware": "Apple A11"
+      },
+      {
+        "company": "엘지",
+        "name": "V30",
+        "release_year": 2017,
+        "OS": "Android",
+        "hardware": "Snapdragon 835"
+      },
+      {
+        "company": "샤오미",
+        "name": "Mi 5",
+        "release_year": 2016,
+        "OS": "Android",
+        "hardware": "Snapdragon 820"
+      }
+    ]
+}
